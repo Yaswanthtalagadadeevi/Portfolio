@@ -4,7 +4,7 @@
    ============================================= */
 
 /* === FONTS === */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* === VARIABLES === */
 :root {
@@ -32,9 +32,9 @@
     --radius-md: 12px;
     --radius-lg: 20px;
     --radius-xl: 28px;
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body: 'DM Sans', -apple-system, sans-serif;
-    --font-mono: 'Space Mono', monospace;
+    --font-display: 'Sora', -apple-system, sans-serif;
+    --font-body: 'Manrope', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out: cubic-bezier(0.45, 0, 0.15, 1);
 }
@@ -155,8 +155,8 @@ body.cursor-hovering .cursor-ring {
 }
 .logo-mark {
     font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--accent-2);
     letter-spacing: -0.02em;
     line-height: 1;
@@ -291,10 +291,10 @@ body.cursor-hovering .cursor-ring {
 }
 .section-title {
     font-family: var(--font-display);
-    font-size: clamp(42px, 6vw, 72px);
-    font-weight: 400;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
     color: var(--fg);
 }
 
@@ -389,15 +389,15 @@ body.cursor-hovering .cursor-ring {
 }
 .hero-name {
     font-family: var(--font-display);
-    font-size: clamp(56px, 9vw, 120px);
-    font-weight: 400;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
+    font-size: clamp(48px, 7.5vw, 96px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
     margin-bottom: 36px;
     color: var(--fg);
 }
 .hero-name em {
-    font-style: italic;
+    font-style: normal;
     color: var(--accent-2);
 }
 .hero-tagline {
@@ -636,12 +636,12 @@ body.cursor-hovering .cursor-ring {
 }
 .project-name {
     font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
     margin-bottom: 8px;
     color: var(--fg);
-    line-height: 1.2;
+    line-height: 1.3;
 }
 .project-desc {
     font-size: 13.5px;
@@ -716,9 +716,9 @@ body.cursor-hovering .cursor-ring {
 }
 .panel-heading h3 {
     font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 400;
-    letter-spacing: -0.02em;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
     margin-bottom: 16px;
 }
 .panel-tags {
@@ -854,9 +854,9 @@ body.cursor-hovering .cursor-ring {
 }
 .tl-role {
     font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
     margin-bottom: 12px;
     color: var(--fg);
 }
@@ -942,8 +942,8 @@ body.cursor-hovering .cursor-ring {
 }
 .activity-title {
     font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 600;
     letter-spacing: -0.02em;
     margin-bottom: 12px;
     color: var(--fg);
@@ -1017,9 +1017,9 @@ body.cursor-hovering .cursor-ring {
 .edu-details { flex: 1; }
 .edu-school {
     font-family: var(--font-display);
-    font-size: 26px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
     margin-bottom: 8px;
     color: var(--fg);
 }
