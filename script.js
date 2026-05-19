@@ -1,215 +1,242 @@
-document.addEventListener("DOMContentLoaded", function (event) {
-    // Dark theme
-    var prevActiveTheme = localStorage.getItem("theme-color");
-    document.documentElement.setAttribute("data-theme", prevActiveTheme ? prevActiveTheme : "light");
-    var themeToggle = document.getElementsByClassName('theme-color-toggle')[0];
-    themeToggle.onclick = function () {
-        var currentTheme = document.documentElement.getAttribute("data-theme");
-        var switchToTheme = currentTheme === "dark" ? "light" : "dark";
-        localStorage.setItem("theme-color", switchToTheme)
-        document.documentElement.setAttribute("data-theme", switchToTheme);
+/* =============================================
+   PORTFOLIO SCRIPT — Premium Interactions
+   ============================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ── THEME ─────────────────────────────────── */
+    const savedTheme = localStorage.getItem("portfolio-theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+
+    const themeToggle = document.querySelector(".theme-toggle");
+    if (themeToggle) {
+        themeToggle.addEventListener("click", function () {
+            const current = document.documentElement.getAttribute("data-theme");
+            const next = current === "dark" ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", next);
+            localStorage.setItem("portfolio-theme", next);
+        });
     }
-    // AOS
-    AOS.init({
-        once: true,
-        offset: 10,
-        duration: 600,
-        easing: 'cubic-bezier(0.42, 0, 0.12, 1.28)'
-    });
-    // kursor
-     new kursor({
-         type: 4,
-         color: '#7E74F1'
-     });
-    // SVG Sprite Support
-    svg4everybody();
-    // CSS Var support
-    cssVars({});
-    // Sticky Menu
-    var menu = document.getElementsByClassName("header")[0];
-    if (window.pageYOffset >= 32) { // fix middle load page issue
-        menu.classList.add('sticky');
-    }
-    var lastScroll = 0;
-    window.addEventListener("scroll", function () {
-        var currentScroll = window.pageYOffset;
-        if (currentScroll <= 32) {
-            menu.classList.remove('sticky');
-            return;
-        } else {
-            menu.classList.add('sticky');
+
+    /* ── CUSTOM CURSOR ────────────────────────── */
+    const dot = document.querySelector(".cursor-dot");
+    const ring = document.querySelector(".cursor-ring");
+
+    if (dot && ring && window.matchMedia("(hover: hover)").matches) {
+        let mouseX = -100, mouseY = -100;
+        let ringX = -100, ringY = -100;
+        let animFrame;
+
+        document.addEventListener("mousemove", function (e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = mouseX + "px";
+            dot.style.top = mouseY + "px";
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.12;
+            ringY += (mouseY - ringY) * 0.12;
+            ring.style.left = ringX + "px";
+            ring.style.top = ringY + "px";
+            animFrame = requestAnimationFrame(animateRing);
         }
-        lastScroll = currentScroll;
-    });
-    // Smooth scroll
-    document.querySelectorAll('.header .nav .nav-links a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth',
-                block: "start"
+        animateRing();
+
+        const hoverTargets = document.querySelectorAll(
+            "a, button, .project-card, .skill-tab, .activity-card, .contact-card"
+        );
+        hoverTargets.forEach(el => {
+            el.addEventListener("mouseenter", () => document.body.classList.add("cursor-hovering"));
+            el.addEventListener("mouseleave", () => document.body.classList.remove("cursor-hovering"));
+        });
+    }
+
+    /* ── HEADER SCROLL ──────────────────────── */
+    const header = document.getElementById("header");
+    function onScroll() {
+        if (window.scrollY > 40) {
+            header.classList.add("scrolled");
+        } else {
+            header.classList.remove("scrolled");
+        }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    /* ── MOBILE NAV ─────────────────────────── */
+    const mobileToggle = document.querySelector(".mobile-nav-toggle");
+    const mobileNav = document.querySelector(".mobile-nav");
+
+    if (mobileToggle && mobileNav) {
+        mobileToggle.addEventListener("click", function () {
+            this.classList.toggle("active");
+            mobileNav.classList.toggle("open");
+        });
+
+        // Close on link click
+        mobileNav.querySelectorAll(".mobile-nav-link").forEach(link => {
+            link.addEventListener("click", function () {
+                mobileToggle.classList.remove("active");
+                mobileNav.classList.remove("open");
             });
         });
+    }
+
+    /* ── SMOOTH SCROLL ──────────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const target = document.querySelector(this.getAttribute("href"));
+            if (target) {
+                e.preventDefault();
+                const offset = header ? header.offsetHeight + 16 : 80;
+                const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top, behavior: "smooth" });
+            }
+        });
     });
-    // Active section
-    var sections = document.querySelectorAll("section");
-    var navLi = document.querySelectorAll(".header .nav .nav-links li");
-    window.onscroll = function () {
-        var current = "";
-        sections.forEach((section) => {
-            var sectionTop = section.offsetTop;
-            if (pageYOffset >= sectionTop - 282) {
+
+    /* ── LOGO SCROLL TO TOP ─────────────────── */
+    const logo = document.querySelector(".logo");
+    if (logo) {
+        logo.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+
+    /* ── SKILLS TABS ────────────────────────── */
+    const skillTabs = document.querySelectorAll(".skill-tab");
+    const skillPanels = document.querySelectorAll(".skills-panel");
+
+    skillTabs.forEach(tab => {
+        tab.addEventListener("click", function () {
+            const target = this.getAttribute("data-target");
+
+            skillTabs.forEach(t => t.classList.remove("active"));
+            skillPanels.forEach(p => p.classList.remove("active"));
+
+            this.classList.add("active");
+            const panel = document.getElementById(target);
+            if (panel) panel.classList.add("active");
+        });
+    });
+
+    /* ── SCROLL REVEAL ──────────────────────── */
+    const revealElements = document.querySelectorAll(
+        ".project-card, .skill-tab, .skills-tabs, .timeline-item, .activity-card, .edu-card, .contact-card, .section-header"
+    );
+
+    revealElements.forEach((el, i) => {
+        el.classList.add("scroll-reveal");
+        // Stagger siblings
+        const siblings = Array.from(el.parentNode.children).filter(c => c.classList.contains(el.classList[0]));
+        const sibIdx = siblings.indexOf(el);
+        if (sibIdx > 0 && sibIdx < 4) {
+            el.classList.add("scroll-reveal-delay-" + Math.min(sibIdx, 3));
+        }
+    });
+
+    const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px"
+    });
+
+    revealElements.forEach(el => observer.observe(el));
+
+    /* ── FOOTER YEAR ────────────────────────── */
+    const yearEl = document.querySelector(".footer .year");
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    } else {
+        // If no .year span, update dynamically
+        const footerCopy = document.querySelector(".footer-copy");
+        if (footerCopy) {
+            footerCopy.innerHTML = footerCopy.innerHTML.replace(
+                /© \d{4}/,
+                "© " + new Date().getFullYear()
+            );
+        }
+    }
+
+    /* ── ACTIVE NAV ON SCROLL ───────────────── */
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    function updateActiveNav() {
+        let current = "";
+        sections.forEach(section => {
+            const top = section.offsetTop - 100;
+            if (window.scrollY >= top) {
                 current = section.getAttribute("id");
             }
         });
-        navLi.forEach((li) => {
-            li.classList.remove("active");
-            if (li.classList.contains(current)) {
-                li.classList.add("active");
+        navLinks.forEach(link => {
+            link.style.color = "";
+            const href = link.getAttribute("href");
+            if (href === "#" + current) {
+                link.style.color = "var(--fg)";
             }
         });
-    };
-    // Back to top
-    var trigger = document.getElementsByClassName('logo')[0];
-    trigger.onclick = function () {
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
-    // Mobile menu
-    var mobileMenuToggle = document.getElementsByClassName('mobile-menu-toggle')[0];
-    mobileMenuToggle.onclick = function () {
-        document.querySelector(".header .nav .nav-links").classList.toggle('active');
-    }
-    // Portfolio slider
-    var numberOfSlides = document.querySelectorAll('.swiper-slide').length;
-    new Swiper('.swiper', {
-        loop: false,
-        allowSlidePrev: numberOfSlides !== 1,
-        allowSlideNext: numberOfSlides !== 1,
-        breakpoints: {
-            0: {
-                slidesPerView: 1,
-                spaceBetween: 16,
-            },
-            769: {
-                slidesPerView: 2,
-                spaceBetween: 32,
-            },
-            1151: {
-                slidesPerView: 3,
-                spaceBetween: 56,
-            },
-        },
-        navigation: {
-            nextEl: '.slider-navigation .next',
-            prevEl: '.slider-navigation .prev',
-        },
+
+    window.addEventListener("scroll", updateActiveNav, { passive: true });
+
+    /* ── PROJECT CARD 3D TILT (subtle) ──────── */
+    const projectCards = document.querySelectorAll(".project-card");
+    projectCards.forEach(card => {
+        card.addEventListener("mousemove", function (e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+            const tiltX = ((y - cy) / cy) * 3;
+            const tiltY = ((x - cx) / cx) * -3;
+            this.style.transform = `translateY(-6px) perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+        });
+        card.addEventListener("mouseleave", function () {
+            this.style.transform = "";
+        });
     });
-    // Experiences
-    document.querySelector(".experience-section .companies-list").addEventListener('click', function (e) {
-        e.preventDefault();
-        if (e.target.tagName === 'LI') {
-           window.innerWidth > 992 ? document.querySelector(".experience-section .selector").style.top = e.target.offsetTop + 'px' : null;
-            document.querySelector(".experience-section .companies-list li.active").classList.remove('active')
-            e.target.classList.add('active');
-            var targetTab = e.target.getAttribute('data-tab');
-            if (targetTab) {
-                document.querySelector(".experience-section .content.active").classList.remove('active')
-                document.getElementById(targetTab).classList.add('active')
+
+    /* ── TIMELINE ANIMATION ─────────────────── */
+    const timelineItems = document.querySelectorAll(".timeline-item");
+    const timelineObserver = new IntersectionObserver(function (entries) {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = (i * 0.15) + "s";
+                entry.target.classList.add("visible");
+                timelineObserver.unobserve(entry.target);
             }
+        });
+    }, { threshold: 0.15 });
+
+    timelineItems.forEach(item => timelineObserver.observe(item));
+
+    /* ── CONTACT CARD HOVER SOUND (visual only) */
+    const contactCards = document.querySelectorAll(".contact-card");
+    contactCards.forEach(card => {
+        const val = card.querySelector(".contact-value");
+        if (val && val.textContent.includes("@")) {
+            card.style.cursor = "pointer";
+            card.addEventListener("click", function () {
+                const email = val.textContent.trim();
+                window.location.href = "mailto:" + email;
+            });
         }
-    });
-    // Skill
-    var bars = document.querySelectorAll(".progress-bar .main-bar .fill");
-    window.addEventListener('scroll', function () {
-        if (isInViewport(document.getElementsByClassName('progress-bar-wrapper')[0])) {
-            bars.forEach(item => {
-                if (isInViewport(item)) {
-                    item.style.width = item.getAttribute('data-width') + '%';
-                }
-            })
+        if (val && val.textContent.startsWith("+")) {
+            card.style.cursor = "pointer";
+            card.addEventListener("click", function () {
+                window.location.href = "tel:" + val.textContent.trim().replace(/\s/g, "");
+            });
         }
     });
 
-    function isInViewport(el) {
-        var rect = el.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    }
-
-    // Contact Form
-    function validateForm() {
-        if (document.contactForm.name.value == '') {
-            document.querySelector('.validation-error.name').classList.add('active')
-            document.contactForm.name.focus();
-            return false;
-        } else {
-            document.querySelector('.validation-error.name').classList.remove('active')
-        }
-        var emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
-        if (document.contactForm.email.value == '' || !document.contactForm.email.value.match(emailRegex)) {
-            document.querySelector('.validation-error.email').classList.add('active')
-            document.contactForm.email.focus();
-            return false;
-        } else {
-            document.querySelector('.validation-error.email').classList.remove('active')
-        }
-        if (document.contactForm.message.value == '') {
-            document.querySelector('.validation-error.message').classList.add('active')
-            document.contactForm.message.focus();
-            return false;
-        } else {
-            document.querySelector('.validation-error.message').classList.remove('active')
-        }
-        return true;
-    }
-    document.contactForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (validateForm()) {
-            var formElements = document.contactForm.elements;
-            var formData = {};
-            for (var i = 0; i < formElements.length; i++) {
-                if (formElements[i].name && formElements[i].value) {
-                    formData[formElements[i].name] = formElements[i].value
-                }
-            }
-            var raw = JSON.stringify(formData);
-            var requestOptions = {
-                method: 'POST',
-                body: raw,
-                redirect: 'follow'
-            };
-            document.getElementsByClassName("submit-btn")[0].classList.add('show-loading');
-            fetch("https://contact-form.devchapter-work.workers.dev", requestOptions)
-                .then(response => response.text())
-                .then(result => {
-                    document.getElementsByClassName("submit-btn")[0].classList.remove('show-loading')
-                    document.getElementsByClassName('success-submit-message')[0].classList.add('active')
-                    document.contactForm.reset();
-                    setTimeout(function () {
-                        document.getElementsByClassName('success-submit-message')[0].classList.remove('active')
-                    }, 4000)
-                })
-                .catch(error => {
-                    document.getElementsByClassName("submit-btn")[0].classList.remove('show-loading')
-                    document.getElementsByClassName('fail-submit-message')[0].classList.add('active');
-                    setTimeout(function () {
-                        document.getElementsByClassName('fail-submit-message')[0].classList.remove('active')
-                    }, 4000)
-                });
-        }
-    })
-    document.contactForm.addEventListener('change', function (e) {
-        e.preventDefault();
-        document.querySelectorAll('.validation-error').forEach(function (el) {
-            el.classList.remove('active')
-        })
-    })
-    // Copyright
-    var currentYear = new Date().getFullYear();
-    var copyrightText = document.querySelector(".footer .copyright .year").innerHTML
-    document.querySelector(".footer .copyright .year").innerHTML = copyrightText.replace('year', currentYear);
-})
+});
