@@ -5,7 +5,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     /* ── THEME ─────────────────────────────────── */
-    const savedTheme = localStorage.getItem("portfolio-theme") || "light";
+    const savedTheme = localStorage.getItem("portfolio-theme") || "dark";
     document.documentElement.setAttribute("data-theme", savedTheme);
 
     const themeToggle = document.querySelector(".theme-toggle");
